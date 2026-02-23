@@ -52,7 +52,6 @@ export default function LoginPage() {
           <h1 className="text-2xl font-bold text-gray-800 mt-4">
             Jal Jeevan Mission
           </h1>
-          <p className="text-[#136FB6] font-bold mt-1">Project Tracking App</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
