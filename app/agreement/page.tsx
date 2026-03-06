@@ -1,4 +1,5 @@
 "use client";
+import * as XLSX from "xlsx";
 
 import React from "react";
 import DashboardLayout from "@/components/layout/dashboard-layout";
@@ -79,6 +80,13 @@ export default function AgreementPage() {
       year: "2022-2023",
     },
   ];
+
+  const handleExport = () => {
+    const ws = XLSX.utils.json_to_sheet(dummyData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Agreements");
+    XLSX.writeFile(wb, "Agreements.xlsx");
+  };
 
   return (
     <DashboardLayout>
@@ -217,7 +225,10 @@ export default function AgreementPage() {
         </Card>
 
         <div className="flex justify-end pt-2">
-          <Button className="bg-[#DFEEF9] hover:bg-[#D0E5F5] text-[#1a2b3c] font-bold text-[12px] h-10 px-6 rounded-lg flex items-center gap-2 shadow-sm">
+          <Button
+            onClick={handleExport}
+            className="bg-[#DFEEF9] hover:bg-[#D0E5F5] text-[#1a2b3c] font-bold text-[12px] h-10 px-6 rounded-lg flex items-center gap-2 shadow-sm"
+          >
             <Upload size={14} className="stroke-[2.5]" />
             Export
           </Button>

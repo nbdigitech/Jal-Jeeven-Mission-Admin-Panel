@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { Search, Bell } from "lucide-react";
 
 export default function Header() {
@@ -37,15 +38,15 @@ export default function Header() {
 
         {/* Notifications */}
         <div className="flex items-center gap-5">
-          <div className="relative cursor-pointer">
+          <Link href="/notifications" className="relative cursor-pointer">
             <Bell
               size={22}
               className="text-[#64748B] hover:text-[#136FB6] transition-colors"
             />
             <span className="absolute -top-1.5 -right-1.5 flex h-[16px] w-[16px] items-center justify-center rounded-full bg-[#136FB6] text-[9px] font-bold text-white border-2 border-white">
-              31
+              5
             </span>
-          </div>
+          </Link>
 
           <div className="h-8 w-px bg-gray-200"></div>
 

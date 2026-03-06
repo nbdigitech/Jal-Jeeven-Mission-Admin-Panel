@@ -1,4 +1,5 @@
 "use client";
+import * as XLSX from "xlsx";
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
+import DashboardLayout from "@/components/layout/dashboard-layout";
 
 export default function ReportsPage() {
   const dummyData = [
@@ -78,6 +80,13 @@ export default function ReportsPage() {
       date: "20/01/2023 9:20:18 PM",
     },
   ];
+
+  const handleExport = () => {
+    const ws = XLSX.utils.json_to_sheet(dummyData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Reports");
+    XLSX.writeFile(wb, "Reports.xlsx");
+  };
 
   return (
     <DashboardLayout>
@@ -192,7 +201,10 @@ export default function ReportsPage() {
         </Card>
 
         <div className="flex justify-end pt-2">
-          <Button className="bg-[#DFEEF9] hover:bg-[#D0E5F5] text-[#1a2b3c] font-bold text-[12px] h-10 px-6 rounded-lg flex items-center gap-2 shadow-sm">
+          <Button
+            onClick={handleExport}
+            className="bg-[#DFEEF9] hover:bg-[#D0E5F5] text-[#1a2b3c] font-bold text-[12px] h-10 px-6 rounded-lg flex items-center gap-2 shadow-sm"
+          >
             <Upload size={14} className="stroke-[2.5]" />
             Export
           </Button>

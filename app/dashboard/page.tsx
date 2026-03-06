@@ -64,18 +64,7 @@ export default function DashboardPage() {
     [],
   );
   const [expenseHeadData, setExpenseHeadData] = React.useState<any[]>([]);
-  const [projectStatuses] = React.useState<string[]>([
-    "Completed",
-    "In Progress",
-    "Processing",
-    "Rejected",
-  ]);
-  const [remarkCategories] = React.useState<string[]>([
-    "Urgent funds needed",
-    "Urgent attention needed",
-    "Dispute at village level",
-    "Dispute at the contactor level",
-  ]);
+
   const [villageStats, setVillageStats] = React.useState<any[]>([]);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState("All");
@@ -186,59 +175,6 @@ export default function DashboardPage() {
         setCompletionStatusData(mappedData);
 
         const villageStatsMap: Record<string, any> = {};
-
-        projects.forEach((p: any) => {
-          const villageName =
-            p.city || p.panchayat?.panchayatName || "Unknown Village";
-
-          if (!villageStatsMap[villageName]) {
-            villageStatsMap[villageName] = {
-              villageName,
-              grandTotal: 0,
-              latestRemarks: "",
-            };
-            projectStatuses.forEach(
-              (s) => (villageStatsMap[villageName][s] = 0),
-            );
-            remarkCategories.forEach(
-              (r) => (villageStatsMap[villageName][r] = 0),
-            );
-          }
-
-          // 1. Map Project Status
-          const statusName = p.projectStatus?.statusName;
-          if (projectStatuses.includes(statusName)) {
-            villageStatsMap[villageName][statusName]++;
-          } else {
-            // Fallback: check if any stage has this status
-            const stages = p.projectStageTrackers || [];
-            const activeStage = stages.find((s: any) =>
-              projectStatuses.includes(s.stageStatus),
-            );
-            if (activeStage) {
-              villageStatsMap[villageName][activeStage.stageStatus]++;
-            }
-          }
-
-          // 2. Gather Site Remarks
-          const stages = p.projectStageTrackers || [];
-          stages.forEach((s: any) => {
-            if (s.remarks && remarkCategories.includes(s.remarks)) {
-              villageStatsMap[villageName][s.remarks]++;
-            }
-          });
-
-          // Keep legacy latestRemarks for alert filtering if needed
-          const remarks = stages
-            .filter((s: any) => s.remarks)
-            .map((s: any) => s.remarks);
-          if (remarks.length > 0) {
-            villageStatsMap[villageName].latestRemarks =
-              remarks[remarks.length - 1];
-          }
-
-          villageStatsMap[villageName].grandTotal++;
-        });
 
         const villageStatsArray = Object.values(villageStatsMap).sort((a, b) =>
           a.villageName.localeCompare(b.villageName),
