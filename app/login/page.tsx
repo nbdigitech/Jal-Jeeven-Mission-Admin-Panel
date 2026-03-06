@@ -7,12 +7,50 @@ import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
+  const [email, setEmail] = useState("districtofficer@gmail.com");
+  const [password, setPassword] = useState("District123");
   const [showPassword, setShowPassword] = useState(false);
+
+  const [error, setError] = useState("");
 
   const handleStaticLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+
+    let name = "";
+    let role = "";
+
+    const userEmail = email.toLowerCase().trim();
+
+    if (
+      userEmail === "districtofficer@gmail.com" &&
+      password === "District123"
+    ) {
+      name = "District Officer";
+      role = "DO";
+    } else if (
+      userEmail === "contractor@gmail.com" &&
+      password === "Contractor123"
+    ) {
+      name = "Contractor Name";
+      role = "Contractor";
+    } else if (
+      userEmail === "headofficer@gmail.com" &&
+      password === "HeadOfficer123"
+    ) {
+      name = "Head Officer Name";
+      role = "Head Officer";
+    } else {
+      setError(
+        "Invalid email or password. Only predefined test credentials are allowed.",
+      );
+      return;
+    }
+
     // Bypass API, directly storing static token
     localStorage.setItem("admin_token", "static_token");
+    localStorage.setItem("user_name", name);
+    localStorage.setItem("user_role", role);
     router.replace("/dashboard");
   };
 
@@ -74,16 +112,23 @@ export default function LoginPage() {
               <div className="flex-1 h-[1px] bg-gray-200"></div>
             </div>
 
+            {error && (
+              <div className="bg-red-50 text-red-500 text-[11px] p-2 rounded mb-3 border border-red-100 font-medium">
+                {error}
+              </div>
+            )}
+
             <form onSubmit={handleStaticLogin} className="space-y-3">
               <div>
                 <label className="block text-[11px] font-medium text-gray-500 mb-1 ml-0.5">
-                  Mobile No.
+                  Email / Mobile No.
                 </label>
                 <input
                   type="text"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-slate-50/50 border border-gray-200 px-3.5 py-2.5 rounded-[8px] focus:ring-2 focus:ring-[#136FB6]/30 focus:border-[#136FB6] outline-none transition text-[13px] text-gray-800 placeholder:text-gray-400"
-                  placeholder="9944579942"
-                  defaultValue="9944579942"
+                  placeholder="Enter email or mobile no."
                 />
               </div>
 
@@ -94,9 +139,10 @@ export default function LoginPage() {
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="w-full bg-slate-50/50 border border-gray-200 px-3.5 py-2.5 rounded-[8px] focus:ring-2 focus:ring-[#136FB6]/30 focus:border-[#136FB6] outline-none transition text-[13px] text-gray-800 tracking-widest placeholder:text-gray-400"
                     placeholder="**********"
-                    defaultValue="password123"
                   />
                   <button
                     type="button"
@@ -136,6 +182,49 @@ export default function LoginPage() {
                   Sign Up
                 </a>
               </p>
+            </div>
+
+            {/* Static Credentials Helper */}
+            <div className="mt-6 border-t border-gray-200 pt-4">
+              <p className="text-[11px] font-semibold text-gray-800 mb-2">
+                Test Credentials:
+              </p>
+              <div className="grid grid-cols-1 gap-2 text-[10px] text-gray-600">
+                <div
+                  className="bg-slate-50 p-2 rounded border border-gray-100 cursor-pointer hover:border-[#136FB6] transition-colors"
+                  onClick={() => {
+                    setEmail("districtofficer@gmail.com");
+                    setPassword("District123");
+                  }}
+                >
+                  <span className="font-bold block text-gray-800">DO</span>
+                  districtofficer@gmail.com / District123
+                </div>
+                <div
+                  className="bg-slate-50 p-2 rounded border border-gray-100 cursor-pointer hover:border-[#136FB6] transition-colors"
+                  onClick={() => {
+                    setEmail("contractor@gmail.com");
+                    setPassword("Contractor123");
+                  }}
+                >
+                  <span className="font-bold block text-gray-800">
+                    Contractor
+                  </span>
+                  contractor@gmail.com / Contractor123
+                </div>
+                <div
+                  className="bg-slate-50 p-2 rounded border border-gray-100 cursor-pointer hover:border-[#136FB6] transition-colors"
+                  onClick={() => {
+                    setEmail("headofficer@gmail.com");
+                    setPassword("HeadOfficer123");
+                  }}
+                >
+                  <span className="font-bold block text-gray-800">
+                    Head Officer
+                  </span>
+                  headofficer@gmail.com / HeadOfficer123
+                </div>
+              </div>
             </div>
           </div>
         </div>

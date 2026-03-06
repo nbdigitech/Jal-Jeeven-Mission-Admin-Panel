@@ -3,14 +3,17 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
-  Database,
-  Users,
-  Briefcase,
   LogOut,
   LayoutDashboard,
-  PlusCircle,
+  FileText,
+  Image as ImageIcon,
+  ClipboardList,
+  Monitor,
+  Globe,
+  FileUp,
+  ListTodo,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -24,23 +27,25 @@ interface SidebarItem {
 
 const menuItems: SidebarItem[] = [
   {
-    label: "Add Project",
-    href: "/projects?create=true",
-    icon: <PlusCircle size={18} />,
-  },
-  {
     label: "Dashboard",
     href: "/dashboard",
-    icon: <LayoutDashboard size={18} />,
+    icon: <LayoutDashboard size={20} />,
   },
-  { label: "Master", href: "/master", icon: <Database size={18} /> },
-  { label: "Contractors", href: "/contractors", icon: <Users size={18} /> },
-  { label: "Projects", href: "/projects", icon: <Briefcase size={18} /> },
+  {
+    label: "Work Order",
+    href: "/work-order",
+    icon: <ClipboardList size={20} />,
+  },
+  { label: "GIS MAP", href: "/gis-map", icon: <Monitor size={20} /> },
+  { label: "Reports", href: "/reports", icon: <FileText size={20} /> },
+  { label: "Agreement", href: "/agreement", icon: <Globe size={20} /> },
+  { label: "Pictures", href: "/pictures", icon: <ImageIcon size={20} /> },
+  { label: "Update", href: "/update", icon: <FileUp size={20} /> },
+  { label: "Status", href: "/status", icon: <ListTodo size={20} /> },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -48,18 +53,17 @@ export default function Sidebar() {
       localStorage.removeItem("admin_token");
       localStorage.removeItem("mock_user"); // Cleanup just in case
       router.push("/login");
-      // Force reload to clear auth state if needed, though router.push usually suffices if state is reactive
     } catch (err) {
       console.error("Logout failed", err);
     }
   };
 
   return (
-    <aside className="fixed inset-y-0 left-0 w-64 bg-white border-r z-50 flex flex-col">
+    <aside className="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-100 z-50 flex flex-col">
       {/* Logo */}
       <div className="flex-none">
-        <div className="flex flex-col items-center justify-center gap-4 border-b px-4 py-8">
-          <div className="relative w-15 h-15">
+        <div className="flex flex-col items-center justify-center gap-2 px-4 py-8">
+          <div className="relative w-[60px] h-[60px]">
             <Image
               src="/logo.png"
               alt="Jal Jeevan Mission Logo"
@@ -68,42 +72,33 @@ export default function Sidebar() {
               priority
             />
           </div>
-          <h1 className="text-xl font-bold text-gray-900 text-center leading-tight">
+          <h1 className="text-[14px] font-bold text-[#1a2b3c] text-center tracking-wide leading-tight mt-1">
             Jal Jeevan Mission
           </h1>
         </div>
       </div>
 
-      <div className="flex-1 overflow-hidden mt-6">
-        <ScrollArea className="h-full px-3">
-          <div className="space-y-2">
+      <div className="flex-1 overflow-hidden">
+        <ScrollArea className="h-full px-4">
+          <div className="space-y-1.5 pt-2">
             {menuItems.map((item) => {
-              const isAddProject = item.label === "Add Project";
-              const isProjects = item.label === "Projects";
-              const isCreateActive = searchParams.get("create") === "true";
-
-              let isActive = false;
-              if (isAddProject) {
-                isActive = pathname === "/projects" && isCreateActive;
-              } else if (isProjects) {
-                isActive = pathname === "/projects" && !isCreateActive;
-              } else {
-                isActive = pathname.startsWith(item.href);
-              }
+              const isActive = pathname.startsWith(item.href);
 
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm mx-auto w-[200px] font-medium transition-colors ${
-                    isAddProject
-                      ? "bg-[#136FB6] text-white shadow-md shadow-[#136FB6]/20 hover:bg-[#105E9A]"
-                      : isActive
-                        ? "bg-[#136FB6]/5 text-[#136FB6]"
-                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                  className={`flex items-center gap-4 px-4 py-3 rounded-lg text-[13px] mx-auto w-full font-bold transition-colors ${
+                    isActive
+                      ? "bg-[#DFEEF9] text-[#136FB6]"
+                      : "text-[#475569] hover:bg-gray-50"
                   }`}
                 >
-                  {item.icon}
+                  <div
+                    className={isActive ? "text-[#136FB6]" : "text-[#64748B]"}
+                  >
+                    {item.icon}
+                  </div>
                   {item.label}
                 </Link>
               );
@@ -113,17 +108,15 @@ export default function Sidebar() {
       </div>
 
       {/* Bottom Section: Logout */}
-      <div className="flex-none p-4 border-t bg-white">
-        <div className="flex justify-center">
-          <Button
-            variant="ghost"
-            onClick={handleLogout}
-            className="gap-2 flex justify-start w-[200px] text-[#136FB6] hover:bg-[#136FB6]/5 rounded-xl font-medium"
-          >
-            <LogOut size={18} />
-            Logout
-          </Button>
-        </div>
+      <div className="flex-none p-4 pb-6 bg-white mt-auto">
+        <Button
+          variant="ghost"
+          onClick={handleLogout}
+          className="gap-3 flex justify-start w-full text-[#64748B] hover:text-[#136FB6] hover:bg-[#DFEEF9] rounded-lg font-bold text-[13px] py-6"
+        >
+          <LogOut size={20} />
+          Logout
+        </Button>
       </div>
     </aside>
   );

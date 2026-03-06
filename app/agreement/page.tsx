@@ -1,0 +1,228 @@
+"use client";
+
+import React from "react";
+import DashboardLayout from "@/components/layout/dashboard-layout";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Upload } from "lucide-react";
+
+export default function AgreementPage() {
+  const dummyData = [
+    {
+      id: 1,
+      workCode: "W467222300694",
+      contractor: "Om Shree Enterprises",
+      contractorCode: "CGer22329",
+      workOrderNo: "251",
+      date: "20/01/2023 9:20:18 PM",
+      division: "Balrampur",
+      agreementNo: "204",
+      year: "2022-2023",
+    },
+    {
+      id: 2,
+      workCode: "W467222300694",
+      contractor: "Om Shree Enterprises",
+      contractorCode: "CGer22329",
+      workOrderNo: "251",
+      date: "20/01/2023 9:20:18 PM",
+      division: "Balrampur",
+      agreementNo: "204",
+      year: "2022-2023",
+    },
+    {
+      id: 3,
+      workCode: "W467222300694",
+      contractor: "Om Shree Enterprises",
+      contractorCode: "CGer22329",
+      workOrderNo: "251",
+      date: "20/01/2023 9:20:18 PM",
+      division: "Balrampur",
+      agreementNo: "205",
+      year: "2022-2023",
+    },
+    {
+      id: 4,
+      workCode: "W467222300694",
+      contractor: "Om Shree Enterprises",
+      contractorCode: "CGer22329",
+      workOrderNo: "251",
+      date: "20/01/2023 9:20:18 PM",
+      division: "Balrampur",
+      agreementNo: "205",
+      year: "2022-2023",
+    },
+    {
+      id: 5,
+      workCode: "W467222300694",
+      contractor: "Om Shree Enterprises",
+      contractorCode: "CGer22329",
+      workOrderNo: "251",
+      date: "20/01/2023 9:20:18 PM",
+      division: "Balrampur",
+      agreementNo: "205",
+      year: "2022-2023",
+    },
+  ];
+
+  return (
+    <DashboardLayout>
+      <div className="space-y-6">
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 bg-white p-4 rounded-[16px] shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
+          <h2 className="text-[16px] font-bold text-[#1a2b3c] whitespace-nowrap px-2">
+            Agreement Details
+          </h2>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <Select defaultValue="2022-2023">
+              <SelectTrigger className="w-[140px] bg-[#F9FAFB] border-gray-100 text-[12px] h-9">
+                <SelectValue placeholder="Year" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="2022-2023">2022-2023</SelectItem>
+                <SelectItem value="2023-2024">2023-2024</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select defaultValue="all">
+              <SelectTrigger className="w-[160px] bg-[#F9FAFB] border-gray-100 text-[12px] h-9">
+                <SelectValue placeholder="Contractor Name" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Contractor Name</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select defaultValue="all">
+              <SelectTrigger className="w-[160px] bg-[#F9FAFB] border-gray-100 text-[12px] h-9">
+                <SelectValue placeholder="Contractor Code" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Contractor Code</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select defaultValue="all">
+              <SelectTrigger className="w-[160px] bg-[#F9FAFB] border-gray-100 text-[12px] h-9">
+                <SelectValue placeholder="Division" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Division</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Button className="bg-[#136FB6] hover:bg-[#105E9A] text-white h-9 px-8 rounded-lg text-[12px] font-medium shadow-md shadow-[#136FB6]/20">
+              Back
+            </Button>
+          </div>
+        </div>
+
+        <Card className="border-none shadow-[0_4px_24px_rgba(0,0,0,0.02)] overflow-hidden bg-white rounded-[16px]">
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-[#DFEEF9] hover:bg-[#DFEEF9] border-none">
+                    <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12">
+                      S No.
+                    </TableHead>
+                    <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12">
+                      Work Code
+                    </TableHead>
+                    <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12">
+                      Name Of Contractor
+                    </TableHead>
+                    <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12">
+                      Contractor Code
+                    </TableHead>
+                    <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12">
+                      Work Order No.
+                    </TableHead>
+                    <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12">
+                      Work Order Date
+                    </TableHead>
+                    <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12">
+                      Division
+                    </TableHead>
+                    <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12">
+                      Agreement No.
+                    </TableHead>
+                    <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12">
+                      Agreement Year
+                    </TableHead>
+                    <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12 text-center">
+                      Action
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {dummyData.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      className="border-b border-gray-50 hover:bg-gray-50/50"
+                    >
+                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                        {row.id}
+                      </TableCell>
+                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                        {row.workCode}
+                      </TableCell>
+                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                        {row.contractor}
+                      </TableCell>
+                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                        {row.contractorCode}
+                      </TableCell>
+                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                        {row.workOrderNo}
+                      </TableCell>
+                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium max-w-[120px]">
+                        {row.date}
+                      </TableCell>
+                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                        {row.division}
+                      </TableCell>
+                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                        {row.agreementNo}
+                      </TableCell>
+                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                        {row.year}
+                      </TableCell>
+                      <TableCell className="text-center py-4">
+                        <Button className="h-7 px-4 bg-[#DFEEF9] hover:bg-[#136FB6] text-[#136FB6] hover:text-white transition-colors text-[11px] font-bold rounded-md">
+                          Details
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="flex justify-end pt-2">
+          <Button className="bg-[#DFEEF9] hover:bg-[#D0E5F5] text-[#1a2b3c] font-bold text-[12px] h-10 px-6 rounded-lg flex items-center gap-2 shadow-sm">
+            <Upload size={14} className="stroke-[2.5]" />
+            Export
+          </Button>
+        </div>
+      </div>
+    </DashboardLayout>
+  );
+}

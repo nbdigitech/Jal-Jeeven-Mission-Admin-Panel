@@ -24,7 +24,17 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-import { Users, HardHat, Building2, MapPin, Search } from "lucide-react";
+import {
+  Users,
+  HardHat,
+  Building2,
+  MapPin,
+  Search,
+  FileEdit,
+  FileText,
+  Image as ImageIcon,
+  FileBarChart,
+} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -285,277 +295,57 @@ export default function DashboardPage() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {summaryData.map((item, index) => (
-            <Card key={index} className="border-none shadow-sm overflow-hidden">
-              <CardContent className="p-6 flex items-center gap-4">
-                <div className={`p-3 rounded-xl ${item.bgColor}`}>
-                  {item.icon}
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500 font-medium">
-                    {item.title}
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {item.value}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Pie Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="border-none shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-lg font-bold">
-                Project Review
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[350px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={projectReviewData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={100}
-                      paddingAngle={2}
-                      dataKey="value"
-                    >
-                      {projectReviewData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                    <Legend
-                      layout="horizontal"
-                      verticalAlign="bottom"
-                      align="center"
-                      wrapperStyle={{ paddingTop: "20px" }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-none shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-lg font-bold">
-                Projects Completion Status
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[350px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={completionStatusData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={100}
-                      paddingAngle={2}
-                      dataKey="value"
-                    >
-                      {completionStatusData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      formatter={(value: number, name: string) => [
-                        `${value} Projects`,
-                        `Progress: ${name}`,
-                      ]}
-                    />
-                    <Legend
-                      layout="horizontal"
-                      verticalAlign="bottom"
-                      align="center"
-                      wrapperStyle={{ paddingTop: "20px" }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Bar Chart */}
-        <Card className="border-none shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-lg font-bold">
-              Project Vs Department - Expense Head
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[400px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={expenseHeadData} margin={{ bottom: 100 }}>
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    vertical={false}
-                    stroke="#f0f0f0"
-                  />
-                  <XAxis
-                    dataKey="name"
-                    angle={-45}
-                    textAnchor="end"
-                    interval={0}
-                    height={100}
-                    tick={{ fontSize: 11, fill: "#666" }}
-                  />
-                  <YAxis tick={{ fontSize: 12, fill: "#666" }} />
-                  <Tooltip />
-                  <Bar
-                    dataKey="value"
-                    fill="#f97316"
-                    radius={[4, 4, 0, 0]}
-                    barSize={20}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
+        {/* Navigation Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-white rounded-[20px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)] cursor-pointer hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] transition-all">
+            <div className="text-[#136FB6] mb-4">
+              <FileEdit size={26} strokeWidth={2.5} />
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Village-wise Project Status Table */}
-        <div className="space-y-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <h2 className="text-xl font-bold text-gray-900">
-              COUNTA Of Village Name (All {stats.totalVillage})
-            </h2>
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <Search
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                  size={18}
-                />
-                <Input
-                  placeholder="Search here"
-                  className="pl-10 w-[250px] bg-white border-0 shadow-sm"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[120px] bg-[#136FB6]/5 border-none text-[#136FB6] font-medium">
-                  <SelectValue placeholder="All" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="All">All</SelectItem>
-                  <SelectItem value="Alert">Alert</SelectItem>
-                  <SelectItem value="Normal">Normal</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <h3 className="text-[#136FB6] font-extrabold text-[16px] mb-0.5 tracking-wide">
+              Agreement
+            </h3>
+            <p className="text-gray-500 text-[11px] font-bold tracking-wide">
+              Details
+            </p>
           </div>
 
-          <Card className="border-none shadow-sm overflow-hidden bg-white">
-            <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-white hover:bg-white border-b text-[12px]">
-                      <TableHead className=" font-bold text-gray-700">
-                        S No.
-                      </TableHead>
-                      <TableHead className="font-bold text-gray-700 t">
-                        Village Name (All {stats.totalVillage})
-                      </TableHead>
+          <div className="bg-white rounded-[20px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)] cursor-pointer hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] transition-all">
+            <div className="text-[#136FB6] mb-4">
+              <FileText size={26} strokeWidth={2.5} />
+            </div>
+            <h3 className="text-[#136FB6] font-extrabold text-[16px] mb-0.5 tracking-wide">
+              Physical Progress
+            </h3>
+            <p className="text-gray-500 text-[11px] font-bold tracking-wide">
+              Details
+            </p>
+          </div>
 
-                      {projectStatuses.map((status) => (
-                        <TableHead
-                          key={status}
-                          className="text-center font-bold text-gray-700 whitespace-nowrap"
-                        >
-                          {status}
-                        </TableHead>
-                      ))}
-                      {remarkCategories.map((remark) => (
-                        <TableHead
-                          key={remark}
-                          className="text-center font-bold text-gray-700 whitespace-nowrap  "
-                        >
-                          {remark}
-                        </TableHead>
-                      ))}
-                      <TableHead className="text-center font-bold text-gray-700 whitespace-nowrap">
-                        Grand Total
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {villageStats
-                      .filter((vs) =>
-                        vs.villageName
-                          .toLowerCase()
-                          .includes(searchQuery.toLowerCase()),
-                      )
-                      .filter((vs) => {
-                        if (statusFilter === "All") return true;
-                        const alertCategories = [
-                          "Site Me Dikkat H",
-                          "Urgent Attention Needed",
-                          "Work Delayed",
-                        ];
-                        const hasAlert = alertCategories.some(
-                          (cat) => vs[cat] > 0,
-                        );
-                        return statusFilter === "Alert" ? hasAlert : !hasAlert;
-                      })
-                      .map((vs, index) => (
-                        <TableRow
-                          key={index}
-                          className="hover:bg-gray-50 transition-colors border-b last:border-0 text-[12px]"
-                        >
-                          <TableCell className=" text-gray-500">
-                            {index + 1}
-                          </TableCell>
-                          <TableCell className=" text-gray-900">
-                            {vs.villageName}
-                          </TableCell>
+          <div className="bg-white rounded-[20px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)] cursor-pointer hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] transition-all">
+            <div className="text-[#136FB6] mb-4">
+              <ImageIcon size={26} strokeWidth={2.5} />
+            </div>
+            <h3 className="text-[#136FB6] font-extrabold text-[16px] mb-0.5 tracking-wide">
+              Pictures
+            </h3>
+            <p className="text-gray-500 text-[11px] font-bold tracking-wide">
+              From GIS App
+            </p>
+          </div>
 
-                          {projectStatuses.map((status) => (
-                            <TableCell
-                              key={status}
-                              className="text-center font-medium"
-                            >
-                              {vs[status] || "-"}
-                            </TableCell>
-                          ))}
-                          {remarkCategories.map((remark) => (
-                            <TableCell
-                              key={remark}
-                              className="text-center font-medium"
-                            >
-                              {vs[remark] || "-"}
-                            </TableCell>
-                          ))}
-                          <TableCell className="text-center font-bold text-gray-900">
-                            {vs.grandTotal}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </div>
-              <div className="p-6 pt-2">
-                <p className="text-sm font-medium text-gray-400">
-                  Total Order : {stats.totalWork}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="bg-white rounded-[20px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)] cursor-pointer hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] transition-all">
+            <div className="text-[#136FB6] mb-4">
+              <FileBarChart size={26} strokeWidth={2.5} />
+            </div>
+            <h3 className="text-[#136FB6] font-extrabold text-[16px] mb-0.5 tracking-wide">
+              Report
+            </h3>
+            <p className="text-gray-500 text-[11px] font-bold tracking-wide">
+              DO & Contractor Detail
+            </p>
+          </div>
         </div>
       </div>
     </DashboardLayout>
   );
 }
-
-
