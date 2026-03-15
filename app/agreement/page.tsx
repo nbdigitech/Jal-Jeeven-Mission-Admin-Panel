@@ -21,68 +21,45 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
+import { getAgreements } from "@/services/agreementService";
 
 export default function AgreementPage() {
-  const dummyData = [
-    {
-      id: 1,
-      workCode: "W467222300694",
-      contractor: "Om Shree Enterprises",
-      contractorCode: "CGer22329",
-      workOrderNo: "251",
-      date: "20/01/2023 9:20:18 PM",
-      division: "Balrampur",
-      agreementNo: "204",
-      year: "2022-2023",
-    },
-    {
-      id: 2,
-      workCode: "W467222300694",
-      contractor: "Om Shree Enterprises",
-      contractorCode: "CGer22329",
-      workOrderNo: "251",
-      date: "20/01/2023 9:20:18 PM",
-      division: "Balrampur",
-      agreementNo: "204",
-      year: "2022-2023",
-    },
-    {
-      id: 3,
-      workCode: "W467222300694",
-      contractor: "Om Shree Enterprises",
-      contractorCode: "CGer22329",
-      workOrderNo: "251",
-      date: "20/01/2023 9:20:18 PM",
-      division: "Balrampur",
-      agreementNo: "205",
-      year: "2022-2023",
-    },
-    {
-      id: 4,
-      workCode: "W467222300694",
-      contractor: "Om Shree Enterprises",
-      contractorCode: "CGer22329",
-      workOrderNo: "251",
-      date: "20/01/2023 9:20:18 PM",
-      division: "Balrampur",
-      agreementNo: "205",
-      year: "2022-2023",
-    },
-    {
-      id: 5,
-      workCode: "W467222300694",
-      contractor: "Om Shree Enterprises",
-      contractorCode: "CGer22329",
-      workOrderNo: "251",
-      date: "20/01/2023 9:20:18 PM",
-      division: "Balrampur",
-      agreementNo: "205",
-      year: "2022-2023",
-    },
-  ];
+  const [agreements, setAgreements] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [userRole, setUserRole] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const role = localStorage.getItem("user_role");
+    setUserRole(role);
+    fetchAgreements();
+  }, []);
+
+  const fetchAgreements = async () => {
+    try {
+      setLoading(true);
+      const data = await getAgreements();
+      setAgreements(data.data || []);
+    } catch (error) {
+      console.error("Error fetching agreements:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleExport = () => {
-    const ws = XLSX.utils.json_to_sheet(dummyData);
+    const exportData = agreements.map((row, index) => ({
+      "S No.": index + 1,
+      "Work Code": row.work?.work_code || "N/A",
+      "Name Of Contractor": row.contractor?.name || "N/A",
+      "Contractor Code": row.contractor?.code || "N/A",
+      "Work Order No.": row.agreementno || "N/A",
+      "Work Order Date": row.created_at ? new Date(row.created_at).toLocaleDateString() : "N/A",
+      "Division": row.work?.district_id || "N/A",
+      "Agreement No.": row.agreementno || "N/A",
+      "Agreement Year": row.agreementyear || "N/A",
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(exportData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Agreements");
     XLSX.writeFile(wb, "Agreements.xlsx");
@@ -93,7 +70,7 @@ export default function AgreementPage() {
       <div className="space-y-6">
         <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 bg-white p-4 rounded-[16px] shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
           <h2 className="text-[16px] font-bold text-[#1a2b3c] whitespace-nowrap px-2">
-            Agreement Details
+            Agreement Details {userRole === "CO" ? "(My Agreements)" : ""}
           </h2>
 
           <div className="flex flex-wrap items-center gap-3">
@@ -179,45 +156,59 @@ export default function AgreementPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {dummyData.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      className="border-b border-gray-50 hover:bg-gray-50/50"
-                    >
-                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
-                        {row.id}
-                      </TableCell>
-                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
-                        {row.workCode}
-                      </TableCell>
-                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
-                        {row.contractor}
-                      </TableCell>
-                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
-                        {row.contractorCode}
-                      </TableCell>
-                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
-                        {row.workOrderNo}
-                      </TableCell>
-                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium max-w-[120px]">
-                        {row.date}
-                      </TableCell>
-                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
-                        {row.division}
-                      </TableCell>
-                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
-                        {row.agreementNo}
-                      </TableCell>
-                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
-                        {row.year}
-                      </TableCell>
-                      <TableCell className="text-center py-4">
-                        <Button className="h-7 px-4 bg-[#DFEEF9] hover:bg-[#136FB6] text-[#136FB6] hover:text-white transition-colors text-[11px] font-bold rounded-md">
-                          Details
-                        </Button>
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={10} className="text-center py-10 text-gray-500">
+                        Loading agreements...
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : agreements.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={10} className="text-center py-10 text-gray-500">
+                        No agreements found.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    agreements.map((row, index) => (
+                      <TableRow
+                        key={row.id}
+                        className="border-b border-gray-50 hover:bg-gray-50/50"
+                      >
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                          {index + 1}
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                          {row.work?.work_code || "N/A"}
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                          {row.contractor?.name || "N/A"}
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                          {row.contractor?.code || "N/A"}
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                          {row.agreementno}
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium max-w-[120px]">
+                          {row.created_at ? new Date(row.created_at).toLocaleDateString() : "N/A"}
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                          {row.work?.district_id || "N/A"}
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                          {row.agreementno}
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                          {row.agreementyear}
+                        </TableCell>
+                        <TableCell className="text-center py-4">
+                          <Button className="h-7 px-4 bg-[#DFEEF9] hover:bg-[#136FB6] text-[#136FB6] hover:text-white transition-colors text-[11px] font-bold rounded-md">
+                            Details
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </div>
@@ -227,7 +218,8 @@ export default function AgreementPage() {
         <div className="flex justify-end pt-2">
           <Button
             onClick={handleExport}
-            className="bg-[#DFEEF9] hover:bg-[#D0E5F5] text-[#1a2b3c] font-bold text-[12px] h-10 px-6 rounded-lg flex items-center gap-2 shadow-sm"
+            disabled={agreements.length === 0}
+            className="bg-[#DFEEF9] hover:bg-[#D0E5F5] text-[#1a2b3c] font-bold text-[12px] h-10 px-6 rounded-lg flex items-center gap-2 shadow-sm disabled:opacity-50"
           >
             <Upload size={14} className="stroke-[2.5]" />
             Export

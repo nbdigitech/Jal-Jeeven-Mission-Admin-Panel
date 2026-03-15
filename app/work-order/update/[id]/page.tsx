@@ -28,6 +28,7 @@ import {
   Clock,
   XSquare,
   AlertCircle,
+  Camera,
 } from "lucide-react";
 import { toast } from "react-toastify";
 import {
@@ -187,6 +188,9 @@ export default function WorkOrderUpdatePage() {
                   <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12 text-center">
                     Status
                   </TableHead>
+                  <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12 text-center">
+                    Photos
+                  </TableHead>
                   <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12 text-right rounded-tr-[20px] pr-8">
                     Action
                   </TableHead>
@@ -242,6 +246,19 @@ export default function WorkOrderUpdatePage() {
                       <TableCell className="py-4.5 text-center">
                         <div className="flex justify-center">
                           {getStatusBadge(row.status)}
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-4.5 text-center">
+                        <div className="flex justify-center">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => router.push(`/work-order/review-photos/${row.id}`)}
+                            className="h-8 w-8 rounded-lg text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+                            title="Review Photos"
+                          >
+                            <Camera size={16} strokeWidth={2.5} />
+                          </Button>
                         </div>
                       </TableCell>
                       <TableCell className="text-right py-4.5 pr-8">
