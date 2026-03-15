@@ -1,57 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useLogin } from "@/hooks/useAuth";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [email, setEmail] = useState("districtofficer@gmail.com");
-  const [password, setPassword] = useState("District123");
+  const { mutate: login, isPending } = useLogin();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const [error, setError] = useState("");
 
-  const handleStaticLogin = (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    let name = "";
-    let role = "";
-
-    const userEmail = email.toLowerCase().trim();
-
-    if (
-      userEmail === "districtofficer@gmail.com" &&
-      password === "District123"
-    ) {
-      name = "District Officer";
-      role = "DO";
-    } else if (
-      userEmail === "contractor@gmail.com" &&
-      password === "Contractor123"
-    ) {
-      name = "Contractor Name";
-      role = "Contractor";
-    } else if (
-      userEmail === "headofficer@gmail.com" &&
-      password === "HeadOfficer123"
-    ) {
-      name = "Head Officer Name";
-      role = "Head Officer";
-    } else {
-      setError(
-        "Invalid email or password. Only predefined test credentials are allowed.",
-      );
+    if (!email || !password) {
+      setError("Please enter both email and password.");
       return;
     }
 
-    // Bypass API, directly storing static token
-    localStorage.setItem("admin_token", "static_token");
-    localStorage.setItem("user_name", name);
-    localStorage.setItem("user_role", role);
-    router.replace("/dashboard");
+    login({ email, password });
   };
 
   return (
@@ -87,8 +58,9 @@ export default function LoginPage() {
 
             <button
               type="button"
-              onClick={handleStaticLogin}
-              className="w-full bg-[#136FB6] hover:bg-[#105E9A] text-white py-2.5 rounded-[8px] font-medium transition flex items-center justify-center gap-2 shadow-[0_4px_14px_0_rgba(19,111,182,0.39)] mb-4 text-[12px]"
+              disabled={isPending}
+              onClick={() => {}} // Google Sign In Not Implemented
+              className="w-full bg-[#136FB6] hover:bg-[#105E9A] text-white py-2.5 rounded-[8px] font-medium transition flex items-center justify-center gap-2 shadow-[0_4px_14px_0_rgba(19,111,182,0.39)] mb-4 text-[12px] disabled:opacity-50"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -118,7 +90,7 @@ export default function LoginPage() {
               </div>
             )}
 
-            <form onSubmit={handleStaticLogin} className="space-y-3">
+            <form onSubmit={handleLogin} className="space-y-3">
               <div>
                 <label className="block text-[11px] font-medium text-gray-500 mb-1 ml-0.5">
                   Email / Mobile No.
@@ -165,9 +137,17 @@ export default function LoginPage() {
               <div className="pt-1">
                 <button
                   type="submit"
-                  className="bg-[#136FB6] hover:bg-[#105E9A] text-white py-2 px-6 rounded-[6px] font-medium transition text-[12px] shadow-[0_4px_14px_0_rgba(19,111,182,0.39)]"
+                  disabled={isPending}
+                  className="bg-[#136FB6] hover:bg-[#105E9A] text-white py-2 px-6 rounded-[6px] font-medium transition text-[12px] shadow-[0_4px_14px_0_rgba(19,111,182,0.39)] flex items-center gap-2 disabled:opacity-70"
                 >
-                  Sign In
+                  {isPending ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Signing In...
+                    </>
+                  ) : (
+                    "Sign In"
+                  )}
                 </button>
               </div>
             </form>
@@ -182,49 +162,6 @@ export default function LoginPage() {
                   Sign Up
                 </a>
               </p>
-            </div>
-
-            {/* Static Credentials Helper */}
-            <div className="mt-6 border-t border-gray-200 pt-4">
-              <p className="text-[11px] font-semibold text-gray-800 mb-2">
-                Test Credentials:
-              </p>
-              <div className="grid grid-cols-1 gap-2 text-[10px] text-gray-600">
-                <div
-                  className="bg-slate-50 p-2 rounded border border-gray-100 cursor-pointer hover:border-[#136FB6] transition-colors"
-                  onClick={() => {
-                    setEmail("districtofficer@gmail.com");
-                    setPassword("District123");
-                  }}
-                >
-                  <span className="font-bold block text-gray-800">DO</span>
-                  districtofficer@gmail.com / District123
-                </div>
-                <div
-                  className="bg-slate-50 p-2 rounded border border-gray-100 cursor-pointer hover:border-[#136FB6] transition-colors"
-                  onClick={() => {
-                    setEmail("contractor@gmail.com");
-                    setPassword("Contractor123");
-                  }}
-                >
-                  <span className="font-bold block text-gray-800">
-                    Contractor
-                  </span>
-                  contractor@gmail.com / Contractor123
-                </div>
-                <div
-                  className="bg-slate-50 p-2 rounded border border-gray-100 cursor-pointer hover:border-[#136FB6] transition-colors"
-                  onClick={() => {
-                    setEmail("headofficer@gmail.com");
-                    setPassword("HeadOfficer123");
-                  }}
-                >
-                  <span className="font-bold block text-gray-800">
-                    Head Officer
-                  </span>
-                  headofficer@gmail.com / HeadOfficer123
-                </div>
-              </div>
             </div>
           </div>
         </div>

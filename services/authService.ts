@@ -1,12 +1,15 @@
 const API_URL = "/api";
-// const API_URL = "http://192.168.1.4:3000";
-export const loginUser = async (email, password) => {
+
+export const loginUser = async (credentials: {
+  email: string;
+  password: string;
+}) => {
   const response = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify(credentials),
   });
 
   const data = await response.json();

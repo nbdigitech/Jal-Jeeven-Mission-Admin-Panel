@@ -20,69 +20,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
+import { Upload, Loader2, RefreshCw } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getWorkItems } from "@/services/workService";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function WorkOrderPage() {
-  const dummyData = [
-    {
-      id: 1,
-      workCode: "W467222300694",
-      district: "Balrampur",
-      block: "Balrampur",
-      panchayat: "Kapildeopur",
-      village: "---",
-      scheme: "SVS",
-      fhtc: 49,
-      amount: 48.14,
-    },
-    {
-      id: 2,
-      workCode: "W467222300694",
-      district: "Balrampur",
-      block: "Balrampur",
-      panchayat: "Kapildeopur",
-      village: "---",
-      scheme: "SVS",
-      fhtc: 195,
-      amount: 164.21,
-    },
-    {
-      id: 3,
-      workCode: "W467222300694",
-      district: "Balrampur",
-      block: "Balrampur",
-      panchayat: "Kapildeopur",
-      village: "---",
-      scheme: "SVS",
-      fhtc: 502,
-      amount: 25.14,
-    },
-    {
-      id: 4,
-      workCode: "W467222300694",
-      district: "Balrampur",
-      block: "Balrampur",
-      panchayat: "Obari",
-      village: "---",
-      scheme: "SVS",
-      fhtc: 50,
-      amount: 25.54,
-    },
-    {
-      id: 5,
-      workCode: "W467222300694",
-      district: "Balrampur",
-      block: "Balrampur",
-      panchayat: "Chilomakhurd",
-      village: "---",
-      scheme: "SVS",
-      fhtc: 332,
-      amount: 105.87,
-    },
-  ];
+  const router = useRouter();
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ["workItems"],
+    queryFn: () => getWorkItems(1, 100),
+  });
+
+  const workItems = Array.isArray(data) ? data : data?.data || [];
 
   const handleExport = () => {
-    const ws = XLSX.utils.json_to_sheet(dummyData);
+    const ws = XLSX.utils.json_to_sheet(workItems);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Work_Orders");
     XLSX.writeFile(wb, "WorkOrders.xlsx");
@@ -124,7 +78,10 @@ export default function WorkOrderPage() {
               </SelectContent>
             </Select>
 
-            <Button className="bg-[#136FB6] hover:bg-[#105E9A] text-white h-9 px-8 rounded-lg text-[12px] font-medium shadow-md shadow-[#136FB6]/20">
+            <Button
+              onClick={() => router.back()}
+              className="bg-[#136FB6] hover:bg-[#105E9A] text-white h-9 px-8 rounded-lg text-[12px] font-medium shadow-md shadow-[#136FB6]/20"
+            >
               Back
             </Button>
           </div>
@@ -138,6 +95,9 @@ export default function WorkOrderPage() {
                   <TableRow className="bg-[#DFEEF9] hover:bg-[#DFEEF9] border-none">
                     <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12">
                       S No.
+                    </TableHead>
+                    <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12">
+                      Title
                     </TableHead>
                     <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12">
                       Work Code
@@ -161,55 +121,142 @@ export default function WorkOrderPage() {
                       No FHTC
                     </TableHead>
                     <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12 bg-[#DFEEF9] opacity-80">
-                      AA Amount
-                      <br />
-                      (In Lakh)
+                      AA Amount (In Lakh)
                     </TableHead>
-                    <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12 text-center bg-[#DFEEF9] opacity-80">
+                    <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12">
+                      Progress (%)
+                    </TableHead>
+                    <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12">
+                      Status
+                    </TableHead>
+                    <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12">
+                      Description
+                    </TableHead>
+                    <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12">
+                      Contractor ID
+                    </TableHead>
+                    <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12">
+                      Latitude
+                    </TableHead>
+                    <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12">
+                      Longitude
+                    </TableHead>
+                    <TableHead className="font-bold text-[#1a2b3c] text-[12px] h-12 text-center">
                       Action
                     </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {dummyData.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      className="border-b border-gray-50 hover:bg-gray-50/50"
-                    >
-                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium bg-[#DFEEF9]/50">
-                        {row.id}
+                  {isLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={17} className="h-24 text-center">
+                        <Loader2 className="h-6 w-6 animate-spin mx-auto text-[#136FB6]" />
+                        <p className="mt-2 text-[12px] text-gray-500 font-medium">
+                          Loading work items...
+                        </p>
                       </TableCell>
-                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium bg-[#DFEEF9]/50">
-                        {row.workCode}
-                      </TableCell>
-                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium bg-[#DFEEF9]/50">
-                        {row.district}
-                      </TableCell>
-                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
-                        {row.block}
-                      </TableCell>
-                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
-                        {row.panchayat}
-                      </TableCell>
-                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
-                        {row.village}
-                      </TableCell>
-                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
-                        {row.scheme}
-                      </TableCell>
-                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
-                        {row.fhtc}
-                      </TableCell>
-                      <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
-                        {row.amount}
-                      </TableCell>
-                      <TableCell className="text-center py-4">
-                        <Button className="h-7 px-4 bg-[#136FB6] hover:bg-[#105E9A] text-white transition-colors text-[11px] font-bold rounded-md">
-                          Action
+                    </TableRow>
+                  ) : isError ? (
+                    <TableRow>
+                      <TableCell colSpan={17} className="h-24 text-center">
+                        <p className="text-[12px] text-red-500 font-medium">
+                          Failed to load work items.
+                        </p>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => refetch()}
+                          className="mt-2 h-8 text-[11px]"
+                        >
+                          <RefreshCw className="mr-2 h-3 w-3" /> Retry
                         </Button>
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : workItems.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={17} className="h-24 text-center">
+                        <p className="text-[12px] text-gray-500 font-medium">
+                          No work items found.
+                        </p>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    workItems.map((row: any, index: number) => (
+                      <TableRow
+                        key={row.id}
+                        className="border-b border-gray-50 hover:bg-gray-50/50 cursor-pointer"
+                        onClick={() =>
+                          router.push(`/work-order/update/${row.id}`)
+                        }
+                      >
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium bg-[#DFEEF9]/50">
+                          {index + 1}
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium bg-[#DFEEF9]/50">
+                          {row.title || "---"}
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium bg-[#DFEEF9]/50">
+                          {row.workCode || "---"}
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium bg-[#DFEEF9]/50">
+                          {row.district || row.district_id || "---"}
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                          {row.block || "---"}
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                          {row.panchayat || "---"}
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                          {row.village || "---"}
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                          {row.scheme || "---"}
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                          {row.fhtc || "---"}
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                          {row.amount || "---"}
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                          <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-[10px] font-bold">
+                            {row.progress_percentage || "0"}%
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                          <span
+                            className={`px-2 py-1 rounded-full text-[10px] font-bold ${
+                              row.status === "COMPLETED"
+                                ? "bg-green-50 text-green-700"
+                                : row.status === "IN_PROGRESS"
+                                  ? "bg-amber-50 text-amber-700"
+                                  : "bg-gray-50 text-gray-600"
+                            }`}
+                          >
+                            {row.status || "PENDING"}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium min-w-[150px]">
+                          {row.description || "---"}
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                          {row.contractor_id || "---"}
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                          {row.latitude || "---"}
+                        </TableCell>
+                        <TableCell className="text-[12px] text-gray-900 py-4 font-medium">
+                          {row.longitude || "---"}
+                        </TableCell>
+                        <TableCell className="text-center py-4">
+                          <Button className="h-7 px-4 bg-[#136FB6] hover:bg-[#105E9A] text-white transition-colors text-[11px] font-bold rounded-md">
+                            Details
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </div>

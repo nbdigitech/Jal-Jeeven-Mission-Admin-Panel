@@ -1,13 +1,5 @@
 "use client";
 
-import React from "react";
-import {
-  getDepartments,
-  getContractors,
-  getProjects,
-  getCityVillages,
-  getDashboardStats,
-} from "@/services/masterService";
 import { toast } from "react-toastify";
 import DashboardLayout from "@/components/layout/dashboard-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -52,6 +44,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
+import React from "react";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -113,35 +106,11 @@ export default function DashboardPage() {
       amount: 125.6,
     },
   ]);
+
   React.useEffect(() => {
     const role = localStorage.getItem("user_role") || "Guest";
     setUserRole(role);
-
-    const fetchData = async () => {
-      try {
-        const [depts, contractors, projects, villages] = await Promise.all([
-          getDepartments(),
-          getContractors(),
-          getProjects(),
-          getCityVillages(),
-        ]);
-
-        setStats({
-          totalDepartment: depts.length,
-          totalWork: projects.length,
-          totalContractor: contractors.length,
-          totalVillage: villages.length,
-          totalAgreement: 142, // Add a dummy total for agreements
-        });
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-        toast.error("Failed to load dashboard data");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
+    setIsLoading(false);
   }, []);
 
   const summaryData = [

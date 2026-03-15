@@ -10,8 +10,7 @@ const nextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "https://bastar-nirman-backend.vercel.app/:path*",
-        // destination: "http://localhost:5000/:path*",
+        destination: "http://localhost:3000/:path*",
       },
     ];
   },
